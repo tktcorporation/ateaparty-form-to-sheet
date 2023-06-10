@@ -1,0 +1,18 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	// Add the IDs of extensions you want installed when the container is created.
+	"customizations": {
+		"extensions": [
+			"ms-azuretools.vscode-docker",
+			"GitHub.copilot",
+			"steoates.autoimport",
+			"Atishay-Jain.All-Autocomplete",
+			"dbaeumer.vscode-eslint",
+			"pflannery.vscode-versionlens",
+			"editorconfig.editorconfig",
+			"WakaTime.vscode-wakatime"
+		]
+	},
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "gh extension install davidraviv/gh-clean-branches && npm install -g @google/clasp"
+}
