@@ -14,5 +14,5 @@
 		]
 	},
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "gh extension install davidraviv/gh-clean-branches && npm install -g @google/clasp"
+  "postCreateCommand": "gh extension install davidraviv/gh-clean-branches && npm install -g @google/clasp @antfu/ni && ni"
 }

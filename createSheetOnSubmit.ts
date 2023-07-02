@@ -21,6 +21,11 @@
 // 3人目: プログラム、出演者欄に表示してほしい名前
 // 4人目: プログラム、出演者欄に表示してほしい名前
 // 5人目: プログラム、出演者欄に表示してほしい名前
+// 1人目: 使用楽器
+// 2人目: 使用楽器
+// 3人目: 使用楽器
+// 4人目: 使用楽器
+// 5人目: 使用楽器
 
 const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
   const response = e.response;
@@ -32,17 +37,30 @@ const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
     console.log(title, response);
   });
 
-  // 「プログラム、出演者欄に表示してほしい名前」をタイトルに含む質問の回答を取得
+  // { title: ['代表者', `メンバー{i+1}`], name: string, instrument: string }[] に変換
   const programNameMaps = itemResponses
     .filter(itemResponse => {
       const title = itemResponse.getItem().getTitle();
       return title.includes('プログラム、出演者欄に表示してほしい名前');
     }
     )
-    .map(itemResponse => ({
-      title: itemResponse.getItem().getTitle(),
-      name: itemResponse.getResponse()
-    }));
+    .map((itemResponse, i) => {
+      // 代表者 or メンバー{i+1}
+      const title = i === 0 ? '代表者' : `メンバー${i}`;
+      const name = itemResponse.getResponse();
+      const instrument = itemResponses
+        .filter(itemResponse => {
+          const title = itemResponse.getItem().getTitle();
+          return title.includes('使用楽器');
+        })
+        .map(itemResponse => itemResponse.getResponse());
+      return {
+        title,
+        name,
+        instrument
+      }
+    });
+
 
   // 「プログラム、出演者欄に表示してほしい名前」の先頭を使ってシートを作成
   const programName = programNameMaps[0].name;
@@ -68,11 +86,13 @@ const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
 
   const sheet = spreadsheet.insertSheet(sheetName);
 
-  // シートの先頭に名前を入れる
+  // シートの先頭に名前と楽器の入力欄を作る
   programNameMaps.forEach((programNameMap, i) => {
-    const key = i === 0 ? '代表者' : `メンバー${i}`;
-    sheet.getRange(1, i + 1).setValue(key);
+    sheet.getRange(1, i + 1).setValue(programNameMap.title);
     sheet.getRange(2, i + 1).setValue(programNameMap.name);
+
+    sheet.getRange(4, i + 1).setValue(`使用楽器${i+1}`);
+    sheet.getRange(5, i + 1).setValue(programNameMap.instrument);
   });
 
   // 次の行から、プログラムの情報を入れられるようにする
@@ -80,7 +100,7 @@ const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
   const programInfo = [
     '曲順', '曲', '作曲者', '演奏時間', '参考URL', '備考'
   ];
-  const startRow = 6;
+  const startRow = 8;
   programInfo.forEach((info, i) => {
     sheet.getRange(startRow, i + 1).setValue(info);
   })
