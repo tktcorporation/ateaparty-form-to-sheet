@@ -53,7 +53,7 @@ const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
           const title = itemResponse.getItem().getTitle();
           return title.includes('使用楽器');
         })
-        .map(itemResponse => itemResponse.getResponse());
+        .map(itemResponse => itemResponse.getResponse())[i];
       return {
         title,
         name,
@@ -91,7 +91,7 @@ const onFormSubmit = (e: GoogleAppsScript.Events.FormsOnFormSubmit) => {
     sheet.getRange(1, i + 1).setValue(programNameMap.title);
     sheet.getRange(2, i + 1).setValue(programNameMap.name);
 
-    sheet.getRange(4, i + 1).setValue(`使用楽器${i+1}`);
+    sheet.getRange(4, i + 1).setValue(`使用楽器${i}`);
     sheet.getRange(5, i + 1).setValue(programNameMap.instrument);
   });
 
